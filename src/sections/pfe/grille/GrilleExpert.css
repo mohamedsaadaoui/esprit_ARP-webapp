@@ -1,0 +1,113 @@
+/* GrilleExpert.css */
+.grille-expert-container {
+  background-color: rgb(102, 0, 0);
+  min-height: 100vh;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.page-content {
+  background-color: white;
+  width: 100%;
+  max-width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  padding: 20mm;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+h1 {
+  text-align: center;
+  color: rgb(102, 0, 0);
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+th, td {
+  border: 1px solid #000;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.header-table th {
+  background-color: white;
+}
+
+.criteria-table th {
+  background-color: #e6e6e6;
+}
+
+.critere-description {
+  min-height: 120px;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+}
+
+.note-button {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #333;
+  background-color: #f8f8f8;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.note-button:hover {
+  background-color: #e0e0e0;
+}
+
+.note-button.selected {
+  background-color: rgb(102, 0, 0);
+  color: white;
+  border-color: rgb(102, 0, 0);
+}
+
+.note-cell {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.score-display {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: rgb(102, 0, 0);
+}
+
+.footer {
+  margin-top: 30px;
+  border-top: 2px solid #333;
+  padding-top: 20px;
+}
+
+.footer p {
+  margin: 5px 0;
+}
+
+@media print {
+  .grille-expert-container {
+    background-color: white;
+    padding: 0;
+  }
+  
+  .page-content {
+    box-shadow: none;
+    padding: 15mm;
+  }
+  
+  .note-button {
+    display: none;
+  }
+}

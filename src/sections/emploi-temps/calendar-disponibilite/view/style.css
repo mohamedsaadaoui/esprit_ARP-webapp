@@ -1,0 +1,47 @@
+.event-type1 {
+    background-color: red;
+  }
+  
+  .event-type2 {
+    background-color: blue;
+  }
+
+  .holiday-event {
+    background-color: red !important;
+    color: white; /* Optionnel pour améliorer la lisibilité */
+    border: none; /* Supprimez la bordure si nécessaire */
+  }
+  
+
+  .indispo-background {
+    background-color: black !important; /* Couleur de l'arrière-plan */
+    color: white !important; /* Couleur du texte */
+    opacity: 0.5; /* Transparence */
+  }
+  
+  .cour-background-annule {
+    background-color: transparent;
+  }
+
+  .matching-cursus {
+    border: 1px solid rgba(139, 0, 0, 0.514); /* Border color for matching */
+    background-color: transparent;
+    border-radius: 5px;
+    cursor: not-allowed  !important;
+
+    
+  }
+  
+  .non-matching-cursus {
+    border: 1px solid #fcbdb096; /* Border color for non-matching */
+    background-color: transparent;
+    border-radius: 5px;
+    cursor: not-allowed  !important;
+
+  }
+
+  .rattrapage-border {
+    border: 1px solid rgba(121, 148, 199, 0.514); /* Specify your desired border color for rattrapage */
+    border-radius: 5px;
+  }
+  

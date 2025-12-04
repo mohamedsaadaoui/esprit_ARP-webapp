@@ -1,0 +1,44 @@
+style css 
+ 
+.event-type1 {
+    background-color: red;
+  }
+ 
+  .event-type2 {
+    background-color: blue;
+  }
+ 
+  .holiday-event {
+    background-color: red !important;
+    color: white; /* Optionnel pour améliorer la lisibilité */
+    border: none; /* Supprimez la bordure si nécessaire */
+  }
+ 
+ 
+  .cours-dispo {
+    background-color: transparent !important; /* Couleur de l'arrière-plan */
+    border-color:transparent !important; ;
+
+  }
+  .cour-background {
+    border: 1px solid rgba(139, 0, 0, 0.514); /* Border color for matching */
+    background-color: transparent;
+    border-radius: 5px;
+  }
+  .cour-background-annule {
+    background-color: rgb(255, 255, 255); /* Rouge opaque */
+    border: none;
+  }
+  .indispo-background {
+    background-color: black !important; /* Couleur de l'arrière-plan */
+    color: white !important; /* Couleur du texte */
+    opacity: 0.5; /* Transparence */
+  }
+
+  .rattrapage-border {
+    border: 1px solid rgba(121, 148, 199, 0.514); /* Specify your desired border color for rattrapage */
+    border-radius: 5px;
+  }
+  .cour-background-annule {
+    background-color: transparent;
+  }

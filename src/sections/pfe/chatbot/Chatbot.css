@@ -1,0 +1,92 @@
+/* Chatbot.css */
+.chatbot-container {
+  position: fixed;
+  bottom: 20px; /* Distance from the bottom */
+  right: 20px; /* Distance from the right */
+  width: 300px; /* Adjust width as necessary */
+  height: 400px; /* Adjust height as necessary */
+  background-color: #fff; /* Optional: Set a background color */
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow effect */
+  border-radius: 10px; /* Optional: Round the corners */
+  display: flex;
+  flex-direction: column;
+  z-index: 1000; /* Ensure it stays on top of other elements */
+  transition: all 0.3s ease; /* Smooth transition */
+}
+
+.chatbot-container.minimized {
+  width: 60px; /* Minimized width */
+  height: 60px; /* Minimized height */
+  overflow: hidden; /* Hide overflowing content */
+}
+
+.chatbot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #1976d2; /* Example: blue header background */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.chatbot-logo {
+  width: 40px; /* Adjust logo size */
+  height: auto;
+}
+
+.chat-history {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  max-height: calc(100% - 90px); /* Adjust based on header size and input box */
+  display: block; /* Ensure chat history shows when not minimized */
+}
+
+.chat-message {
+  margin-bottom: 10px;
+}
+
+.chat-message.bot {
+  background-color: #e3f2fd;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.chat-message.user {
+  background-color: #c8e6c9;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-align: right; /* Align user messages to the right */
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.input-container.minimized {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40px; /* Smaller input area when minimized */
+}
+
+.input-container .MuiTextField-root {
+  flex: 1;
+}
+
+/* Hide chat history when minimized */
+.chatbot-container.minimized .chat-history {
+  display: none;
+}
+
+input[type="text"] {
+  display: block; /* Ensure input box is shown even when minimized */
+}
