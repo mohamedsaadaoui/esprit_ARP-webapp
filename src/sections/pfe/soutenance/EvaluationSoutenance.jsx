@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogTitle
 } from '@mui/material';
+import soutenanceService from 'src/services/pfe-services/soutenanceService';
 
 
 const steps = ['Sélection Étudiant', 'Choix Grille', 'Remplissage'];
@@ -40,10 +41,10 @@ const EvaluationSoutenance = () => {
     );
     
     if (grilleExistante) {
-      // API pour récupérer les notes existantes
-      fetch(`/api/evaluations/${grilleExistante.idEvaluation}`)
-        .then(response => response.json())
-        .then(data => setNotes(data.notes));
+      // Utiliser le service pour récupérer les notes existantes
+      soutenanceService.getEvaluationById(grilleExistante.idEvaluation)
+        .then(data => setNotes(data.notes))
+        .catch(error => console.error('Erreur chargement évaluation:', error));
     }
   };
 
@@ -58,18 +59,12 @@ const EvaluationSoutenance = () => {
     };
 
     try {
-      const response = await fetch('/api/evaluations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(evaluationData)
-      });
+      await soutenanceService.saveEvaluation(evaluationData);
 
-      if (response.ok) {
-        alert(statut === 'VALIDEE' ? 'Grille validée avec succès!' : 'Brouillon sauvegardé!');
-        setActiveStep(1); // Retour au choix des grilles
-        setSelectedGrille(null);
-        setNotes({});
-      }
+      alert(statut === 'VALIDEE' ? 'Grille validée avec succès!' : 'Brouillon sauvegardé!');
+      setActiveStep(1); // Retour au choix des grilles
+      setSelectedGrille(null);
+      setNotes({});
     } catch (error) {
       console.error('Erreur sauvegarde:', error);
       alert('Erreur lors de la sauvegarde');

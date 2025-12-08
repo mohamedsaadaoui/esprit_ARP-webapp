@@ -74,30 +74,6 @@ const SoutenanceTableRow = ({ row, onEditRow, onDeleteRow }) => {
     });
   };
 
-  // 🆕 FONCTION : Redirection directe vers EvaluationWorkflow
-  const handleQuickEvaluation = (grilleType) => {
-    if (!row.rawData?.idAffectationStage?.etudiant?.etudiantId) {
-      console.error('ID étudiant manquant');
-      return;
-    }
-
-    const etudiantId = row.rawData.idAffectationStage.etudiant.etudiantId;
-    
-    navigate('/evaluation-workflow', {
-      state: {
-        selectedEtudiant: etudiantId,
-        selectedGrilleType: grilleType,
-        soutenanceId: row.id,
-        etudiantInfo: {
-          nom: row.etudiant,
-          departement: row.rawData?.idAffectationStage?.etudiant?.departement,
-          option: row.rawData?.idAffectationStage?.etudiant?.option,
-          entreprise: row.rawData?.idAffectationStage?.entreprise?.nomEntreprise,
-          projet: row.rawData?.idAffectationStage?.projet?.titreProjet
-        }
-      }
-    });
-  };
 
   // 🆕 FONCTION : Couleurs basées sur StatutSoutenance (enum)
   const getStatusColor = (statutSoutenance) => {

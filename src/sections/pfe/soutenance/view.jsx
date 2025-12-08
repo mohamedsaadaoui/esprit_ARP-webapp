@@ -1,25 +1,42 @@
-import { useState, useEffect, useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
+
 import {
-  Card, 
-  Table, 
-  Tabs, 
   Tab, 
-  Container, 
-  TableBody, 
-  TableContainer,
-  Box,
-  Grid,
-  Typography,
-  Chip,
-  Avatar,
-  AvatarGroup,
-  LinearProgress,
+  Box, 
+  Card, 
+  Tabs, 
+  Grid, 
+  Chip, 
+  Table,
   alpha,
-  useTheme
+  useTheme,
+  Container,
+  TableBody,
+  Typography,
+  TableContainer,
+  LinearProgress
 } from '@mui/material';
+// Icons
+import {
+  Block as BlockIcon,
+  Cancel as CancelIcon,
+  School as SchoolIcon,
+  Pending as PendingIcon,
+  DoneAll as DoneAllIcon,
+  Schedule as ScheduleIcon,
+  PlayArrow as PlayArrowIcon,
+  TrendingUp as TrendingUpIcon,
+  Assignment as AssignmentIcon,
+  AccessTime as AccessTimeIcon,
+  CheckCircle as CheckCircleIcon
+} from '@mui/icons-material';
+
+import soutenanceService from 'src/services/pfe-services/soutenanceService';
+
+import Label from 'src/components/label';
+import Scrollbar from 'src/components/scrollbar';
 import { useSnackbar } from 'src/components/snackbar';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import Scrollbar from 'src/components/scrollbar';
 import {
   useTable,
   TableNoData,
@@ -27,27 +44,10 @@ import {
   TableEmptyRows,
   TablePaginationCustom
 } from 'src/components/table';
-import Label from 'src/components/label';
-import soutenanceService from 'src/services/pfe-services/soutenanceService';
-import SoutenanceTableRow from './SoutenanceTableRow';
-import SoutenanceTableToolbar from './SoutenanceTableToolbar';
-import EditSoutenanceDialog from './EditSoutenanceDialog';
 
-// Icons
-import {
-  Schedule as ScheduleIcon,
-  CheckCircle as CheckCircleIcon,
-  Pending as PendingIcon,
-  Cancel as CancelIcon,
-  Groups as GroupsIcon,
-  School as SchoolIcon,
-  TrendingUp as TrendingUpIcon,
-  Assignment as AssignmentIcon,
-  AccessTime as AccessTimeIcon,
-  PlayArrow as PlayArrowIcon,
-  DoneAll as DoneAllIcon,
-  Block as BlockIcon
-} from '@mui/icons-material';
+import SoutenanceTableRow from './SoutenanceTableRow';
+import EditSoutenanceDialog from './EditSoutenanceDialog';
+import SoutenanceTableToolbar from './SoutenanceTableToolbar';
 
 // OPTIONS DE STATUT SIMPLIFIÉES
 const STATUS_OPTIONS = [
@@ -224,6 +224,7 @@ const StatsCard = ({ title, value, subtitle, icon, color, progress, trend }) => 
             <Chip 
               label={trend} 
               size="small" 
+              // eslint-disable-next-line react/prop-types
               color={trend.includes('+') ? 'success' : 'error'}
               variant="outlined"
               sx={{ mt: 1, fontSize: '0.7rem' }}
@@ -289,6 +290,7 @@ export default function SoutenanceListView() {
   };
 
   // 🆕 EFFET : Timer pour mise à jour automatique en temps réel
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (tableData.length > 0) {
       // Mettre à jour immédiatement
@@ -342,7 +344,6 @@ export default function SoutenanceListView() {
       
     } catch (err) {
       console.error('Erreur API Soutenances:', err);
-      //enqueueSnackbar('Erreur de chargement des soutenances', { variant: 'error' });
     } finally {
       setLoading(false);
     }

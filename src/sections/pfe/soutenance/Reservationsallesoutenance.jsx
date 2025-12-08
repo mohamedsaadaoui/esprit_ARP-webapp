@@ -16,8 +16,8 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import frLocale from "date-fns/locale/fr";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import soutenanceService from "src/services/pfe-services/soutenanceService";
 const GestionSoutenances = ({ cursusId=1 }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [heureDebut, setHeureDebut] = useState(new Date());
@@ -33,14 +33,12 @@ const navigate = useNavigate();
     }
 
     try {
-      const response = await axios.get(
-        `http://localhost:8222/api/salle/contSalle/byCursus/${cursusId}`
-      );
+      const allSallesData = await soutenanceService.getAllSalles();
 
-      if (Array.isArray(response.data)) {
-        setAllSalles(response.data);
+      if (Array.isArray(allSallesData)) {
+        setAllSalles(allSallesData);
       } else {
-        console.error("Réponse inattendue du serveur:", response.data);
+        console.error("Réponse inattendue du serveur:", allSallesData);
         setAllSalles([]);
       }
     } catch (error) {
@@ -60,22 +58,17 @@ const navigate = useNavigate();
       const heureDebutStr = heureDebut.toTimeString().split(" ")[0];
       const heureFinStr = heureFin.toTimeString().split(" ")[0];
 
-      const response = await axios.get(
-        "http://localhost:8222/api/salle/disponibiliteSalle/toutesDisponibilites",
-        {
-          params: {
-            dateDebut: dateStr,
-            heureDebut: heureDebutStr,
-            heureFin: heureFinStr,
-            cursusId: cursusId,
-          },
-        }
+      const disponibilitesData = await soutenanceService.getSallesDisponiblesPourCreneau(
+        dateStr,
+        heureDebutStr,
+        heureFinStr,
+        cursusId
       );
 
-      if (Array.isArray(response.data)) {
-        setSalles(response.data);
+      if (Array.isArray(disponibilitesData)) {
+        setSalles(disponibilitesData);
       } else {
-        console.error("Réponse inattendue du serveur:", response.data);
+        console.error("Réponse inattendue du serveur:", disponibilitesData);
         setSalles([]);
       }
     } catch (error) {

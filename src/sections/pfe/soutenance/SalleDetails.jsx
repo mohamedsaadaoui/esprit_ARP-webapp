@@ -50,7 +50,7 @@ import {
   Close as CloseIcon,
   Save as SaveIcon
 } from "@mui/icons-material";
-import axios from "axios";
+import soutenanceService from "src/services/pfe-services/soutenanceService";
 
 const SalleDetails = () => {
   const { id } = useParams();
@@ -87,8 +87,7 @@ const SalleDetails = () => {
     "Salle de conférence"
   ];
 
-  // 🆕 FONCTION AMÉLIORÉE : Récupérer les informations de la salle
-// 🆕 FONCTION CORRIGÉE : Récupérer les informations de la salle
+  // 🆕 FONCTION CORRIGÉE : Récupérer les informations de la salle
 const fetchSalleDetails = async () => {
   try {
     setLoading(true);
@@ -96,9 +95,8 @@ const fetchSalleDetails = async () => {
 
     console.log("🔍 Récupération des détails pour la salle ID:", id);
 
-    // 1. Récupérer directement via l'endpoint qui fonctionne
-    const dispoResponse = await axios.get(`http://localhost:8222/api/salle/disponibiliteSalle/disponibilite/${id}`);
-    const disponibilites = dispoResponse.data;
+    // 1. Récupérer les détails de la salle via le service
+    const disponibilites = await soutenanceService.getSalleDetails(id);
     
     console.log("📦 Données reçues de l'API disponibilite:", disponibilites);
 
@@ -112,13 +110,10 @@ const fetchSalleDetails = async () => {
 
     console.log("✅ Salle récupérée:", salleInfo);
 
-    // 3. Récupérer les soutenances pour cette salle
+    // 3. Récupérer les soutenances pour cette salle via le service
     let soutenancesSalle = [];
     try {
-      const soutenancesResponse = await axios.get("http://localhost:8021/sout");
-      soutenancesSalle = soutenancesResponse.data.filter(sout => 
-        sout.salle?.id === salleId
-      );
+      soutenancesSalle = await soutenanceService.getSoutenancesBySalle(salleId);
       setSoutenances(soutenancesSalle);
       console.log(`📚 ${soutenancesSalle.length} soutenances trouvées`);
     } catch (soutError) {
@@ -191,8 +186,8 @@ const fetchSalleDetails = async () => {
   // Fonction pour charger la liste des cursus
   const fetchCursusList = async () => {
     try {
-      const response = await axios.get("http://localhost:8222/api/cursus/all");
-      return response.data;
+      // Cette fonction n'est pas utilisée pour les cursus, peut être supprimée
+      return [];
     } catch (error) {
       console.error("Erreur lors du chargement des cursus:", error);
       return [];
@@ -248,10 +243,7 @@ const fetchSalleDetails = async () => {
         localisation: editFormData.localisation.trim()
       };
 
-      const response = await axios.put(
-        `http://localhost:8222/api/salle/contSalle/update/${id}`,
-        updateData
-      );
+      const response = await soutenanceService.updateSalle(id, updateData);
 
       setSalle(prev => ({
         ...prev,
@@ -279,21 +271,18 @@ const fetchSalleDetails = async () => {
   };
 
   // Activer/désactiver la salle
-// Activer/désactiver la salle
 const handleToggleStatus = async () => {
   try {
-    const response = await axios.put(
-      `http://localhost:8222/api/salle/contSalle/statut/${id}`
-    );
+    const response = await soutenanceService.toggleSalleStatus(id);
     
     setSalle(prev => ({
       ...prev,
-      statut: response.data.statut // CORRECTION: statut au lieu de statutactif
+      statut: response.statut
     }));
 
     setSnackbar({
       open: true,
-      message: `Salle ${response.data.statut ? 'activée' : 'désactivée'} avec succès!`,
+      message: `Salle ${response.statut ? 'activée' : 'désactivée'} avec succès!`,
       severity: "success"
     });
   } catch (error) {
@@ -374,19 +363,6 @@ const handleToggleStatus = async () => {
 
 // Ajoutez ce test temporairement pour voir la structure exacte
 useEffect(() => {
-  const testAPI = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8222/api/salle/contSalle/${id}`);
-      console.log("Structure de l'API contSalle:", response.data);
-      
-      const allResponse = await axios.get("http://localhost:8222/api/salle/contSalle/all");
-      console.log("Structure de l'API all:", allResponse.data[0]);
-    } catch (error) {
-      console.error("Test API error:", error);
-    }
-  };
-  
-  testAPI();
   fetchSalleDetails();
 }, [id]);
 

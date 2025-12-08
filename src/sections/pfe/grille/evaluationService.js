@@ -21,19 +21,12 @@ api.interceptors.response.use(
 export const evaluationService = {
   // Soutenances
   getSoutenancesAujourdhui: () => api.get('/soutenances/aujourdhui'),
-  getSoutenancesByEmploye: (employeId) => api.get(`/soutenances/employe/${employeId}`),
   
   // Évaluations
-  getEvaluationById: (id) => api.get(`/evaluations/${id}`),
   createEvaluation: (evaluationData) => api.post('/evaluations', evaluationData),
-  updateEvaluation: (id, evaluationData) => api.put(`/evaluations/${id}`, evaluationData),
-  getEvaluationsBySoutenance: (soutenanceId) => api.get(`/evaluations/soutenance/${soutenanceId}`),
-  getEvaluationsByEmploye: (employeId) => api.get(`/evaluations/employe/${employeId}`),
   
   // Grilles
   getTypesGrille: () => api.get('/grilles/types'),
-  getGrilleAcademique: () => api.get('/grilles/academique'),
-  getGrilleByType: (typeGrille) => api.get(`/grilles/type/${typeGrille}`),
 };
 
 export default api;

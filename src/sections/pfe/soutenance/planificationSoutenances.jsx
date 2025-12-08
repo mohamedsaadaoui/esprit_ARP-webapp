@@ -1,82 +1,54 @@
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import {
   Box,
   Grid,
   Card,
-  CardContent,
-  Typography,
-  Button,
   Chip,
-  TextField,
-  IconButton,
-  Divider,
-  Avatar,
-  Badge,
-  LinearProgress,
   Fade,
   Zoom,
+  Badge,
   alpha,
+  Alert,
+  Button,
+  Avatar,
+  Select,
   useTheme,
   MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  Alert,
   Snackbar,
+  TextField,
+  Typography,
+  IconButton,
+  InputLabel,
+  CardContent,
+  FormControl,
+  LinearProgress,
 } from "@mui/material";
-
 import {
-  Refresh as RefreshIcon,
   Add as AddIcon,
+  People as PeopleIcon,
+  School as SchoolIcon,
+  Refresh as RefreshIcon,
+  Sensors as SensorsIcon,
   Settings as SettingsIcon,
-  CalendarToday as CalendarTodayIcon,
   Videocam as VideocamIcon,
-  ScreenShare as ScreenShareIcon,
   VolumeUp as VolumeUpIcon,
   TouchApp as TouchAppIcon,
-  People as PeopleIcon,
   Schedule as ScheduleIcon,
-  School as SchoolIcon,
-  WorkspacePremium as WorkspacePremiumIcon,
-  Sensors as SensorsIcon,
   FilterList as FilterListIcon,
   AccessTime as AccessTimeIcon,
+  ScreenShare as ScreenShareIcon,
+  CalendarToday as CalendarTodayIcon,
+  WorkspacePremium as WorkspacePremiumIcon,
 } from "@mui/icons-material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-// Service pour les appels API
-const soutenanceService = {
-  getSallesDisponiblesPourCreneau: async (dateDebut, heureDebut, heureFin, cursusId) => {
-    const response = await axios.get(
-      `http://localhost:8222/api/salle/disponibiliteSalle/toutesDisponibilites`,
-      {
-        params: { dateDebut, heureDebut, heureFin, cursusId },
-        timeout: 10000
-      }
-    );
-    return response.data;
-  },
+import soutenanceService from "src/services/pfe-services/soutenanceService";
 
-  getDisponibiliteSalles: async () => {
-    const response = await axios.get(
-      `http://localhost:8222/api/salle/disponibiliteSalle/toutesDisponibilites`,
-      { timeout: 10000 }
-    );
-    return response.data;
-  },
 
-  getAllSoutenancesWithMembres: async () => {
-    const response = await axios.get(
-      `http://localhost:8021/sout/avec-membres`,
-      { timeout: 10000 }
-    );
-    return response.data;
-  }
-};
 
 const PlanificationSoutenances = () => {
   const theme = useTheme();
@@ -162,8 +134,6 @@ const PlanificationSoutenances = () => {
     try {
       const dateStr = date.toISOString().split('T')[0];
       const creneauSelectionne = creneauxHoraires.find(c => c.value === creneau) || creneauxHoraires[0];
-      const heureDebutStr = creneauSelectionne.debut;
-      const heureFinStr = creneauSelectionne.fin;
       const cursusId = localStorage.getItem('selectedCursusId') || 1;
 
       console.log('🎯 Recherche salles disponibles pour:', { 
@@ -204,7 +174,7 @@ const PlanificationSoutenances = () => {
 
       // 🆕 TRANSFORMATION AVEC STATUTS BASÉS SUR LES SOUTENANCES
       const sallesAvecStatuts = disponibilites.map(disponibilite => {
-        const salle = disponibilite.salle;
+        const {salle} = disponibilite;
         
         // 🎯 DÉTERMINER LE STATUT BASÉ SUR LES SOUTENANCES
         const statut = determinerStatutSalle(disponibilite, toutesSoutenances);
@@ -283,66 +253,6 @@ const PlanificationSoutenances = () => {
     return technologies.length > 0 ? technologies : ['Standard'];
   };
 
-  const calculerProgression = (dateSoutenance, heureDebut, heureFin) => {
-    const maintenant = new Date();
-    const debut = new Date(`${dateSoutenance}T${heureDebut}`);
-    const fin = new Date(`${dateSoutenance}T${heureFin}`);
-    
-    if (maintenant < debut) return 0;
-    if (maintenant > fin) return 100;
-    
-    const dureeTotale = fin - debut;
-    const tempsEcoule = maintenant - debut;
-    return Math.round((tempsEcoule / dureeTotale) * 100);
-  };
-
-  // 🆕 FONCTION POUR OBTENIR LES SOUTENANCES D'UNE SALLE
-  const getSoutenancesPourSalle = (salleId, soutenances) => {
-    return soutenances.filter(soutenance => 
-      soutenance.salle && soutenance.salle.id === salleId
-    );
-  };
-
-  // 🆕 FONCTION POUR OBTENIR LA PROCHAINE SOUTENANCE
-  const getProchaineSoutenance = (salleId, soutenances) => {
-    const maintenant = new Date();
-    const aujourdhui = maintenant.toISOString().split('T')[0];
-    
-    const soutenancesSalle = getSoutenancesPourSalle(salleId, soutenances);
-    const soutenancesFutures = soutenancesSalle.filter(soutenance => {
-      const dateSoutenance = soutenance.dateSoutenance;
-      const heureDebut = soutenance.heureDebut?.substring(0, 5);
-      
-      if (dateSoutenance > aujourdhui) return true;
-      if (dateSoutenance === aujourdhui && heureDebut > maintenant.toTimeString().substring(0, 5)) return true;
-      
-      return false;
-    });
-    
-    return soutenancesFutures.sort((a, b) => {
-      const dateA = new Date(`${a.dateSoutenance}T${a.heureDebut}`);
-      const dateB = new Date(`${b.dateSoutenance}T${b.heureDebut}`);
-      return dateA - dateB;
-    })[0] || null;
-  };
-
-  // 🆕 FONCTION POUR OBTENIR LA SOUTENANCE EN COURS
-  const getSoutenanceEnCours = (salleId, soutenances) => {
-    const maintenant = new Date();
-    const aujourdhui = maintenant.toISOString().split('T')[0];
-    const heureActuelle = maintenant.toTimeString().substring(0, 5);
-    
-    const soutenancesSalle = getSoutenancesPourSalle(salleId, soutenances);
-    
-    return soutenancesSalle.find(soutenance => {
-      if (soutenance.dateSoutenance !== aujourdhui) return false;
-      
-      const heureDebut = soutenance.heureDebut?.substring(0, 5);
-      const heureFin = soutenance.heureFin?.substring(0, 5);
-      
-      return heureDebut && heureFin && heureActuelle >= heureDebut && heureActuelle <= heureFin;
-    }) || null;
-  };
 
   // useEffect pour le chargement initial
   useEffect(() => {
@@ -399,21 +309,6 @@ const PlanificationSoutenances = () => {
       case "Réservée": return "🟡";
       default: return "⚪";
     }
-  };
-
-  const getEquipementIcon = (equipement) => {
-    const icons = {
-      "Projecteur": <ScreenShareIcon fontSize="small" />,
-      "Visioconférence": <VideocamIcon fontSize="small" />,
-      "Système audio": <VolumeUpIcon fontSize="small" />,
-      "Écran tactile": <TouchAppIcon fontSize="small" />,
-      "Tableau Intelligent": <WorkspacePremiumIcon fontSize="small" />,
-      "WiFi": <SensorsIcon fontSize="small" />,
-      "Ordinateurs": <SettingsIcon fontSize="small" />,
-      "Tableau": <WorkspacePremiumIcon fontSize="small" />,
-      "Grand écran": <ScreenShareIcon fontSize="small" />,
-    };
-    return icons[equipement] || <SettingsIcon fontSize="small" />;
   };
 
   const creneauActuel = creneauxHoraires.find(c => c.value === selectedCreneau);
@@ -478,17 +373,6 @@ const PlanificationSoutenances = () => {
               >
                 Actualiser
               </Button>
-              <Button 
-                startIcon={<AddIcon />} 
-                variant="contained" 
-                onClick={() => navigate("nouvelle")}
-                sx={{ borderRadius: 3 }}
-              >
-                Nouvelle soutenance
-              </Button>
-              <IconButton sx={{ border: 1, borderRadius: 2 }}>
-                <SettingsIcon />
-              </IconButton>
             </Box>
           </Box>
         </Fade>
@@ -870,6 +754,7 @@ const PlanificationSoutenances = () => {
                               variant="determinate" 
                               value={salle.occupation}
                               color={
+                                // eslint-disable-next-line no-nested-ternary
                                 salle.statut === "Disponible" ? "success" :
                                 salle.statut === "EN_COURS" ? "error" : "warning"
                               }
@@ -878,19 +763,7 @@ const PlanificationSoutenances = () => {
                           </Box>
                         )}
 
-                        {/* Équipements */}
-                        <Box display="flex" gap={1} flexWrap="wrap" mb={2}>
-                          {salle.equipements.map((equipement, idx) => (
-                            <Chip
-                              key={idx}
-                              icon={getEquipementIcon(equipement)}
-                              label={equipement}
-                              size="small"
-                              variant="outlined"
-                              sx={{ borderRadius: 2 }}
-                            />
-                          ))}
-                        </Box>
+                    
 
                         {/* Technologies */}
                         {salle.technologies && salle.technologies.length > 0 && (
@@ -920,7 +793,11 @@ const PlanificationSoutenances = () => {
                                 salleCapacite: salle.places,
                                 selectedDate: selectedDate,
                                 creneauDebut: salle.creneauDebut,
-                                creneauFin: salle.creneauFin
+                                creneauFin: salle.creneauFin,
+                                dateRecherche: salle.dateRecherche,
+                                // 🆕 Passer aussi les données pour l'auto-sélection
+                                autoSelectSalle: true,
+                                etudiantId: "223AMT4058"
                               } 
                             })}
                             disabled={salle.statut !== "Disponible"}

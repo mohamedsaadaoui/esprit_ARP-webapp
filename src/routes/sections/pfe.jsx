@@ -57,9 +57,7 @@ export const pfeRoutes = [
       { 
         path: 'soutenance/planification/nouvelle', 
         element: (
-          <RoleBasedGuard roles={['code34']} hasContent>
             <NouvelleReservation />
-          </RoleBasedGuard>
         ) 
       },
       

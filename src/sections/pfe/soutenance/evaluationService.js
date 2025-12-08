@@ -1,81 +1,31 @@
-import axios from 'axios';
+// ⚠️ DEPRECATED: Ce fichier est maintenant déprécié
+// Veuillez utiliser soutenanceService depuis src/services/pfe-services/soutenanceService
+// 
+// Les fonctions d'évaluation ont été migrées vers soutenanceService:
+// - getSoutenancesAujourdhui() → soutenanceService.getSoutenancesAujourdhui()
+// - createEvaluation() → soutenanceService.saveEvaluation()
+// - getTypesGrille() → à implémenter dans soutenanceService si nécessaire
 
-const API_BASE_URL = 'http://localhost:8099/api';
+import soutenanceService from 'src/services/pfe-services/soutenanceService';
 
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 10000,
-});
-
-// Intercepteur pour logging des requêtes
-api.interceptors.request.use(
-  (config) => {
-    console.log(`🔄 API Request: ${config.method?.toUpperCase()} ${config.url}`, config.data);
-    return config;
-  },
-  (error) => {
-    console.error('❌ API Request Error:', error);
-    return Promise.reject(error);
-  }
-);
-
-// Intercepteur pour logging des réponses
-api.interceptors.response.use(
-  (response) => {
-    console.log(`✅ API Response: ${response.status} ${response.config.url}`, response.data);
-    return response;
-  },
-  (error) => {
-    console.error('❌ API Response Error:', {
-      url: error.config?.url,
-      method: error.config?.method,
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message
-    });
-    return Promise.reject(error);
-  }
-);
-
+// Wrapper pour maintenir la compatibilité avec l'ancien code
 export const evaluationService = {
-  // Soutenances
-  getSoutenancesAujourdhui: () => api.get('/soutenances/aujourdhui'),
-  
-  // Évaluations
-  getEvaluationById: (id) => api.get(`/evaluations/${id}`),
-  
-  createEvaluation: (evaluationData) => {
-    console.log('📤 Creating evaluation:', evaluationData);
-    return api.post('/evaluations', evaluationData);
+  // Soutenances du jour
+  getSoutenancesAujourdhui: async () => {
+    return soutenanceService.getSoutenancesAujourdhui();
   },
   
-  updateEvaluation: (id, evaluationData) => api.put(`/evaluations/${id}`, evaluationData),
-  
-  getEvaluationsBySoutenance: (soutenanceId) => api.get(`/evaluations/soutenance/${soutenanceId}`),
-  
-  getEvaluationsByEmploye: (employeId) => api.get(`/evaluations/employe/${employeId}`),
-  
-  // Grilles
-  getTypesGrille: () => api.get('/grilles/types'),
-  
-  getGrilleAcademique: () => api.get('/grilles/academique'),
-  
-  getGrilleByType: (typeGrille) => api.get(`/grilles/type/${typeGrille}`),
+  // Créer/sauvegarder une évaluation
+  createEvaluation: async (evaluationData) => {
+    console.log('📤 Creating evaluation:', evaluationData);
+    return soutenanceService.saveEvaluation(evaluationData);
+  },
+        
+  // Grilles d'évaluation (à implémenter dans soutenanceService)
+  getTypesGrille: async () => {
+    console.warn('⚠️ getTypesGrille() n\'est pas encore implémentée dans soutenanceService');
+    return [];
+  },
 };
 
-// Test de connexion API
-export const testApiConnection = async () => {
-  try {
-    const response = await api.get('/grilles/types');
-    console.log('✅ API Connection Test: SUCCESS');
-    return true;
-  } catch (error) {
-    console.error('❌ API Connection Test: FAILED', error);
-    return false;
-  }
-};
-
-export default api;
+export default evaluationService;

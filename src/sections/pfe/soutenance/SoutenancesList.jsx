@@ -11,7 +11,7 @@ import {
   Alert,
   Paper
 } from '@mui/material';
-import { evaluationService } from '../services/evaluationService';
+import soutenanceService from 'src/services/pfe-services/soutenanceService';
 
 const SoutenancesList = ({ onSelectSoutenance, selectedSoutenance }) => {
   const [soutenances, setSoutenances] = useState([]);
@@ -25,8 +25,8 @@ const SoutenancesList = ({ onSelectSoutenance, selectedSoutenance }) => {
   const fetchSoutenancesAujourdhui = async () => {
     try {
       setLoading(true);
-      const response = await evaluationService.getSoutenancesAujourdhui();
-      setSoutenances(response.data);
+      const response = await soutenanceService.getAllSoutenances();
+      setSoutenances(Array.isArray(response) ? response : response?.data || []);
     } catch (err) {
       setError('Erreur lors du chargement des soutenances');
       console.error('Error fetching soutenances:', err);

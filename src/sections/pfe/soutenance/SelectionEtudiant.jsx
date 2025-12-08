@@ -14,6 +14,7 @@ import {
   Chip,
   Alert
 } from '@mui/material';
+import soutenanceService from 'src/services/pfe-services/soutenanceService';
 
 const SelectionEtudiant = ({ onEtudiantSelect }) => {
   const [soutenances, setSoutenances] = useState([]);
@@ -22,8 +23,7 @@ const SelectionEtudiant = ({ onEtudiantSelect }) => {
   useEffect(() => {
     const fetchSoutenances = async () => {
       try {
-        const response = await fetch('/api/soutenances/aujourdhui');
-        const data = await response.json();
+        const data = await soutenanceService.getSoutenancesAujourdhui();
         setSoutenances(data);
       } catch (error) {
         console.error('Erreur chargement soutenances:', error);
