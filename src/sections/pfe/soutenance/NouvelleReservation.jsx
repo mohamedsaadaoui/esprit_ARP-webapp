@@ -105,7 +105,7 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
     president: "",
     membresJury: [],
     sujet: "",
-    date: location.state?.date || defaultDate || "",
+    date: location.state?.date || defaultDate || new Date().toISOString().split('T')[0],
     heureDebut: location.state?.heureDebut || defaultHeureDebut || "08:00",
     heureFin: location.state?.heureFin || defaultHeureFin || "18:00"
   });
@@ -248,7 +248,8 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
     // Auto-selectionner l'etudiant pour les tests
     setForm(prev => ({
       ...prev,
-      etudiant: "223AMT4058"
+      etudiant: "223AMT4058",
+      date: prev.date || new Date().toISOString().split('T')[0]
     }));
   }, []);
 

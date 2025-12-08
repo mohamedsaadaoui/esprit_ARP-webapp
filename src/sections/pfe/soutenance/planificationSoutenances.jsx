@@ -77,52 +77,52 @@ const PlanificationSoutenances = () => {
   // 🆕 FONCTION POUR DÉTERMINER LE STATUT BASÉ SUR LES SOUTENANCES
   const determinerStatutSalle = (salle, soutenances) => {
     if (!salle || !salle.salle) return "Indisponible";
-    
+
     const salleId = salle.salle.id;
     const maintenant = new Date();
     const aujourdhui = maintenant.toISOString().split('T')[0];
     const heureActuelle = maintenant.toTimeString().substring(0, 5);
-    
+
     // 🆕 Trouver les soutenances pour cette salle
-    const soutenancesSalle = soutenances.filter(soutenance => 
+    const soutenancesSalle = soutenances.filter(soutenance =>
       soutenance.salle && soutenance.salle.id === salleId
     );
-    
+
     // Vérifier si une soutenance est en cours (même jour et heure actuelle dans le créneau)
     const soutenanceEnCours = soutenancesSalle.find(soutenance => {
       if (soutenance.dateSoutenance !== aujourdhui) return false;
-      
+
       const heureDebut = soutenance.heureDebut?.substring(0, 5);
       const heureFin = soutenance.heureFin?.substring(0, 5);
-      
+
       return heureDebut && heureFin && heureActuelle >= heureDebut && heureActuelle <= heureFin;
     });
-    
+
     if (soutenanceEnCours) {
       return "EN_COURS";
     }
-    
+
     // Vérifier les soutenances futures (même jour mais après l'heure actuelle)
     const soutenancesFutures = soutenancesSalle.filter(soutenance => {
       if (soutenance.dateSoutenance !== aujourdhui) return false;
-      
+
       const heureDebut = soutenance.heureDebut?.substring(0, 5);
       return heureDebut && heureDebut > heureActuelle;
     });
-    
+
     if (soutenancesFutures.length > 0) {
       return "Réservée";
     }
-    
+
     // Vérifier les soutenances d'autres jours
-    const soutenancesAutresJours = soutenancesSalle.filter(soutenance => 
+    const soutenancesAutresJours = soutenancesSalle.filter(soutenance =>
       soutenance.dateSoutenance !== aujourdhui
     );
-    
+
     if (soutenancesAutresJours.length > 0) {
       return "Réservée";
     }
-    
+
     return "Disponible";
   };
 
@@ -130,32 +130,32 @@ const PlanificationSoutenances = () => {
   const fetchSallesAvecSoutenances = async (date = selectedDate, creneau = selectedCreneau) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const dateStr = date.toISOString().split('T')[0];
       const creneauSelectionne = creneauxHoraires.find(c => c.value === creneau) || creneauxHoraires[0];
       const cursusId = localStorage.getItem('selectedCursusId') || 1;
 
-      console.log('🎯 Recherche salles disponibles pour:', { 
-        dateStr, 
+      console.log('🎯 Recherche salles disponibles pour:', {
+        dateStr,
         creneau: creneauSelectionne.label,
-        cursusId 
+        cursusId
       });
 
       // 🎯 RÉCUPÉRATION DES DISPONIBILITÉS
       let disponibilites = [];
       try {
         disponibilites = await soutenanceService.getDisponibiliteSalles();
-        
+
         console.log(`🏫 ${disponibilites.length} disponibilités reçues de l'API`);
-        
+
         // 🆕 FILTRER LES DISPONIBILITÉS PAR DATE
-        const disponibilitesFiltrees = disponibilites.filter(dispo => 
+        const disponibilitesFiltrees = disponibilites.filter(dispo =>
           dispo.dateDebut === dateStr
         );
-        
+
         console.log(`📅 ${disponibilitesFiltrees.length} disponibilités pour la date ${dateStr}`);
-        
+
         disponibilites = disponibilitesFiltrees;
       } catch (error) {
         console.error('💥 Erreur récupération disponibilités:', error);
@@ -174,11 +174,11 @@ const PlanificationSoutenances = () => {
 
       // 🆕 TRANSFORMATION AVEC STATUTS BASÉS SUR LES SOUTENANCES
       const sallesAvecStatuts = disponibilites.map(disponibilite => {
-        const {salle} = disponibilite;
-        
+        const { salle } = disponibilite;
+
         // 🎯 DÉTERMINER LE STATUT BASÉ SUR LES SOUTENANCES
         const statut = determinerStatutSalle(disponibilite, toutesSoutenances);
-        
+
         // 🎯 CALCULER L'OCCUPATION
         let occupation = 0;
         if (statut === "EN_COURS") occupation = 100;
@@ -193,7 +193,6 @@ const PlanificationSoutenances = () => {
           type: salle.typesalle || 'Salle standard',
           localisation: salle.localisation || 'Localisation non définie',
           equipements: getEquipementsFromSalle(salle),
-          technologies: getTechnologiesFromSalle(salle),
           occupation: occupation,
           creneauDebut: disponibilite.heureDebut,
           creneauFin: disponibilite.heureFin,
@@ -227,7 +226,7 @@ const PlanificationSoutenances = () => {
   // Fonctions utilitaires
   const getEquipementsFromSalle = (salle) => {
     const equipements = [];
-    
+
     if (salle.typesalle?.includes('Amphi') || salle.typesalle?.includes('Amphithéâtre')) {
       equipements.push('Projecteur', 'Système audio', 'Visioconférence');
     } else if (salle.typesalle?.includes('Informatique')) {
@@ -237,20 +236,8 @@ const PlanificationSoutenances = () => {
     } else {
       equipements.push('Projecteur', 'Tableau');
     }
-    
-    return equipements;
-  };
 
-  const getTechnologiesFromSalle = (salle) => {
-    const technologies = [];
-    
-    if (salle.capacite > 15) technologies.push('HD');
-    if (salle.capacite > 20) technologies.push('4K');
-    if (salle.typesalle?.includes('Amphi')) {
-      technologies.push('Audio Pro', 'Grand écran');
-    }
-    
-    return technologies.length > 0 ? technologies : ['Standard'];
+    return equipements;
   };
 
 
@@ -339,9 +326,9 @@ const PlanificationSoutenances = () => {
         <Fade in timeout={800}>
           <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={4}>
             <Box>
-              <Typography 
-                variant="h3" 
-                fontWeight="bold" 
+              <Typography
+                variant="h3"
+                fontWeight="bold"
                 gutterBottom
                 sx={{
                   background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
@@ -365,9 +352,9 @@ const PlanificationSoutenances = () => {
               )}
             </Box>
             <Box display="flex" gap={1}>
-              <Button 
-                startIcon={<RefreshIcon />} 
-                variant="outlined" 
+              <Button
+                startIcon={<RefreshIcon />}
+                variant="outlined"
                 onClick={handleRefresh}
                 sx={{ borderRadius: 3 }}
               >
@@ -381,7 +368,7 @@ const PlanificationSoutenances = () => {
         <Zoom in timeout={1000}>
           <Grid container spacing={3} mb={4}>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ 
+              <Card sx={{
                 background: `linear-gradient(135deg, ${theme.palette.background.paper}, ${alpha(theme.palette.primary.light, 0.1)})`,
                 p: 3,
                 border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
@@ -407,9 +394,9 @@ const PlanificationSoutenances = () => {
                 </Box>
               </Card>
             </Grid>
-            
+
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ 
+              <Card sx={{
                 background: `linear-gradient(135deg, ${theme.palette.success.light}, ${alpha(theme.palette.success.main, 0.1)})`,
                 p: 3,
                 color: 'white',
@@ -437,7 +424,7 @@ const PlanificationSoutenances = () => {
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ 
+              <Card sx={{
                 background: `linear-gradient(135deg, ${theme.palette.error.light}, ${alpha(theme.palette.error.main, 0.1)})`,
                 p: 3,
                 color: 'white',
@@ -465,7 +452,7 @@ const PlanificationSoutenances = () => {
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ 
+              <Card sx={{
                 background: `linear-gradient(135deg, ${theme.palette.warning.light}, ${alpha(theme.palette.warning.main, 0.1)})`,
                 p: 3,
                 color: 'white',
@@ -504,7 +491,7 @@ const PlanificationSoutenances = () => {
                   Filtres de recherche
                 </Typography>
               </Box>
-              
+
               <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
                 <TextField
                   placeholder="Rechercher une salle..."
@@ -512,7 +499,7 @@ const PlanificationSoutenances = () => {
                   size="small"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  sx={{ 
+                  sx={{
                     minWidth: 200,
                     '& .MuiOutlinedInput-root': { borderRadius: 3 }
                   }}
@@ -557,7 +544,7 @@ const PlanificationSoutenances = () => {
                   slotProps={{
                     textField: {
                       size: 'small',
-                      sx: { 
+                      sx: {
                         minWidth: 180,
                         '& .MuiOutlinedInput-root': { borderRadius: 3 }
                       }
@@ -573,7 +560,7 @@ const PlanificationSoutenances = () => {
               </Box>
 
               <Box mt={2} display="flex" alignItems="center" gap={1} flexWrap="wrap">
-                <Chip 
+                <Chip
                   label={`Date: ${selectedDate.toLocaleDateString('fr-FR')}`}
                   size="small"
                   color="primary"
@@ -581,25 +568,25 @@ const PlanificationSoutenances = () => {
                   onDelete={() => handleDateChange(new Date())}
                   deleteIcon={<RefreshIcon />}
                 />
-                <Chip 
+                <Chip
                   label={`Créneau: ${creneauActuel?.label}`}
                   size="small"
                   color="secondary"
                   variant="outlined"
-                  onDelete={() => handleCreneauChange({ target: { value: 'TOUTE_LA_JOURNEE' }})}
+                  onDelete={() => handleCreneauChange({ target: { value: 'TOUTE_LA_JOURNEE' } })}
                   deleteIcon={<RefreshIcon />}
                 />
                 {selectedStatut !== "TOUS" && (
-                  <Chip 
+                  <Chip
                     label={`Statut: ${selectedStatut}`}
                     size="small"
                     color="default"
                     variant="outlined"
-                    onDelete={() => handleStatutChange({ target: { value: 'TOUS' }})}
+                    onDelete={() => handleStatutChange({ target: { value: 'TOUS' } })}
                   />
                 )}
                 {search && (
-                  <Chip 
+                  <Chip
                     label={`Recherche: "${search}"`}
                     size="small"
                     color="default"
@@ -621,12 +608,12 @@ const PlanificationSoutenances = () => {
                 ({filteredSalles.length} salles sur {total} actives)
               </Typography>
             </Typography>
-            
+
             <Box display="flex" gap={1}>
               <Button
                 variant={selectedStatut === "TOUS" ? "contained" : "outlined"}
                 size="small"
-                onClick={() => handleStatutChange({ target: { value: 'TOUS' }})}
+                onClick={() => handleStatutChange({ target: { value: 'TOUS' } })}
                 sx={{ borderRadius: 2 }}
               >
                 Tous
@@ -635,7 +622,7 @@ const PlanificationSoutenances = () => {
                 variant={selectedStatut === "Disponible" ? "contained" : "outlined"}
                 size="small"
                 color="success"
-                onClick={() => handleStatutChange({ target: { value: 'Disponible' }})}
+                onClick={() => handleStatutChange({ target: { value: 'Disponible' } })}
                 sx={{ borderRadius: 2 }}
               >
                 Disponibles
@@ -644,7 +631,7 @@ const PlanificationSoutenances = () => {
                 variant={selectedStatut === "EN_COURS" ? "contained" : "outlined"}
                 size="small"
                 color="error"
-                onClick={() => handleStatutChange({ target: { value: 'EN_COURS' }})}
+                onClick={() => handleStatutChange({ target: { value: 'EN_COURS' } })}
                 sx={{ borderRadius: 2 }}
               >
                 EN_COURS
@@ -653,14 +640,14 @@ const PlanificationSoutenances = () => {
                 variant={selectedStatut === "Réservée" ? "contained" : "outlined"}
                 size="small"
                 color="warning"
-                onClick={() => handleStatutChange({ target: { value: 'Réservée' }})}
+                onClick={() => handleStatutChange({ target: { value: 'Réservée' } })}
                 sx={{ borderRadius: 2 }}
               >
                 Réservées
               </Button>
             </Box>
           </Box>
-          
+
           {filteredSalles.length === 0 ? (
             <Card sx={{ p: 4, textAlign: 'center', borderRadius: 4 }}>
               <Typography variant="h6" color="text.secondary" gutterBottom>
@@ -669,8 +656,8 @@ const PlanificationSoutenances = () => {
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 Essayez de modifier la date, le créneau horaire, le statut ou votre recherche
               </Typography>
-              <Button 
-                variant="outlined" 
+              <Button
+                variant="outlined"
                 onClick={() => {
                   setSelectedStatut("TOUS");
                   setSearch("");
@@ -686,7 +673,7 @@ const PlanificationSoutenances = () => {
               {filteredSalles.map((salle, index) => (
                 <Grid item xs={12} lg={6} key={salle.id}>
                   <Zoom in timeout={800 + (index * 200)}>
-                    <Card 
+                    <Card
                       sx={{
                         borderRadius: 4,
                         border: `2px solid ${alpha(getStatusColor(salle.statut), 0.2)}`,
@@ -707,10 +694,10 @@ const PlanificationSoutenances = () => {
                               <Typography variant="h5" fontWeight="bold">
                                 {salle.nom}
                               </Typography>
-                              <Badge 
+                              <Badge
                                 color={
                                   salle.statut === "Disponible" ? "success" :
-                                  salle.statut === "EN_COURS" ? "error" : "warning"
+                                    salle.statut === "EN_COURS" ? "error" : "warning"
                                 }
                                 variant="dot"
                               />
@@ -722,7 +709,7 @@ const PlanificationSoutenances = () => {
                             <Typography variant="body2" color="text.secondary">
                               📍 {salle.localisation}
                             </Typography>
-                            
+
                             <Typography variant="caption" color="primary" sx={{ mt: 0.5, display: 'block' }}>
                               🕐 {salle.creneauDebut?.substring(0, 5)} - {salle.creneauFin?.substring(0, 5)}
                             </Typography>
@@ -732,7 +719,7 @@ const PlanificationSoutenances = () => {
                             label={salle.statut}
                             color={
                               salle.statut === "Disponible" ? "success" :
-                              salle.statut === "EN_COURS" ? "error" : "warning"
+                                salle.statut === "EN_COURS" ? "error" : "warning"
                             }
                             variant="filled"
                             sx={{ borderRadius: 2, fontWeight: 'bold' }}
@@ -750,20 +737,20 @@ const PlanificationSoutenances = () => {
                                 {salle.occupation}%
                               </Typography>
                             </Box>
-                            <LinearProgress 
-                              variant="determinate" 
+                            <LinearProgress
+                              variant="determinate"
                               value={salle.occupation}
                               color={
                                 // eslint-disable-next-line no-nested-ternary
                                 salle.statut === "Disponible" ? "success" :
-                                salle.statut === "EN_COURS" ? "error" : "warning"
+                                  salle.statut === "EN_COURS" ? "error" : "warning"
                               }
                               sx={{ borderRadius: 2, height: 4 }}
                             />
                           </Box>
                         )}
 
-                    
+
 
                         {/* Technologies */}
                         {salle.technologies && salle.technologies.length > 0 && (
@@ -783,11 +770,11 @@ const PlanificationSoutenances = () => {
 
                         {/* Actions */}
                         <Box mt={3} display="flex" gap={1} justifyContent="space-between">
-                          <Button 
+                          <Button
                             variant="contained"
                             startIcon={<AddIcon />}
-                            onClick={() => navigate("nouvelle", { 
-                              state: { 
+                            onClick={() => navigate("nouvelle", {
+                              state: {
                                 salleId: salle.id,
                                 salleNom: salle.nom,
                                 salleCapacite: salle.places,
@@ -798,10 +785,10 @@ const PlanificationSoutenances = () => {
                                 // 🆕 Passer aussi les données pour l'auto-sélection
                                 autoSelectSalle: true,
                                 etudiantId: "223AMT4058"
-                              } 
+                              }
                             })}
                             disabled={salle.statut !== "Disponible"}
-                            sx={{ 
+                            sx={{
                               borderRadius: 3,
                               flex: 1,
                               opacity: salle.statut !== "Disponible" ? 0.6 : 1
@@ -809,8 +796,8 @@ const PlanificationSoutenances = () => {
                           >
                             {salle.statut === "Disponible" ? "Planifier Soutenance" : "Indisponible"}
                           </Button>
-                          
-                          <Button 
+
+                          <Button
                             variant="outlined"
                             onClick={() => navigate(`${salle.id}`)}
                             sx={{ borderRadius: 3 }}
@@ -831,8 +818,8 @@ const PlanificationSoutenances = () => {
         <Fade in timeout={1500}>
           <Box mt={4} textAlign="center">
             <Typography variant="body2" color="text.secondary">
-              📊 Données mises à jour en temps réel • 
-              Dernière actualisation: {new Date().toLocaleTimeString('fr-FR')} • 
+              📊 Données mises à jour en temps réel •
+              Dernière actualisation: {new Date().toLocaleTimeString('fr-FR')} •
               Créneau: {creneauActuel?.label}
             </Typography>
             <Typography variant="caption" color="text.secondary">
