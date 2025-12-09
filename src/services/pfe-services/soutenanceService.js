@@ -1,11 +1,26 @@
 import axios from 'axios';
+import axiosInstance from 'src/utils/axios';
 
 const DISP_SALLE_BASE = 'http://localhost:8222/api/salle/disponibiliteSalle'
 const SALLE_BASE = 'http://localhost:8222/api/salle/contSalle'
-const API_BASE = 'http://localhost:8222/api/soutenance'; // Vide pour utiliser les URLs relatives
+const API_BASE = 'http://localhost:8222/api/soutenance';
 
 const soutenanceService = {
   // ==================== MÉTHODES SOUTENANCE ====================
+
+  // added by jawhar for clear integration lately
+  getAllEnseignants: () => {
+    const response = axiosInstance.get(`http://localhost:8222/api/employe/enseignants`);
+    return response;
+  },
+
+  // Nouvelle méthode : Planifier une soutenance
+  planifierSoutenance: (payload) => {
+    return axios.post(
+      "http://localhost:8222/api/soutenance/planifier",
+      payload
+    );
+  },
 
   // 1️⃣ Récupérer toutes les soutenances
   getAllSoutenances: () => axios.get(`${API_BASE}`),

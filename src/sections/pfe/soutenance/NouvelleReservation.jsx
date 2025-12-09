@@ -65,18 +65,14 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
   const [employes, setEmployes] = useState([]);
   const [etudiants, setEtudiants] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [filtersLoading, setFiltersLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   const [dialogJuryOpen, setDialogJuryOpen] = useState(false);
-  const [dialogEtudiantOpen, setDialogEtudiantOpen] = useState(false);
 
-  // 🆕 CORRECTION : Initialiser avec des tableaux vides et valider les IDs
+  // Initialiser avec des tableaux vides et valider les IDs
   const [selectedPresident, setSelectedPresident] = useState("");
   const [selectedMembres, setSelectedMembres] = useState([]);
-
-  const [searchEtudiant, setSearchEtudiant] = useState("");
 
   // 🔔 Notifications modernes
   const [snackbar, setSnackbar] = useState({
@@ -85,12 +81,12 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
     severity: "success"
   });
 
-  // 🎯 Steps pour le processus - Étape 0 (Sélection de salle) automatique, on commence à étape 1
+  // Steps pour le processus - Étape 0 (Sélection de salle) automatique, on commence à étape 1
   const [activeStep, setActiveStep] = useState(1);
   const steps = ['Choix de l\'étudiant', 'Configuration du jury', 'Confirmation'];
 
-  // 🆕 Filtres pour les salles
-  // 🆕 CORRECTION : Initialisation des filtres avec date du jour par défaut
+  // Filtres pour les salles
+  // CORRECTION : Initialisation des filtres avec date du jour par défaut
   const [filters, setFilters] = useState({
     date: location.state?.date || defaultDate || new Date().toISOString().split('T')[0],
     heureDebut: location.state?.heureDebut || defaultHeureDebut || "08:00",
@@ -113,80 +109,7 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
   const showSnackbar = (message, severity = "success") => {
     setSnackbar({ open: true, message, severity });
   };
-  const compareHeures = (heure1, heure2) => {
-    const [h1, m1] = heure1.split(':').map(Number);
-    const [h2, m2] = heure2.split(':').map(Number);
-    return (h1 * 60 + m1) - (h2 * 60 + m2);
-  };
 
-  // 🔹 Charger salles disponibles avec filtres
-  const fetchSallesDisponibles = async (filtersParam) => {
-    setFiltersLoading(true);
-    try {
-      const toutesDisponibilites = await soutenanceService.getDisponibiliteSalles();
-
-      console.log("🔍 Filtres appliqués:", filtersParam);
-      console.log("📦 Données reçues:", toutesDisponibilites);
-
-      // 🆕 FILTRAGE ROBUSTE
-      const sallesFiltrees = toutesDisponibilites.filter(dispo => {
-        // Vérification de la date
-        if (filtersParam.date && dispo.dateDebut !== filtersParam.date) {
-          return false;
-        }
-
-        // Vérification du créneau horaire
-        if (filtersParam.heureDebut && filtersParam.heureFin) {
-          // Normaliser les formats d'heure
-          const debutDispo = dispo.heureDebut?.length === 8
-            ? dispo.heureDebut.substring(0, 5)
-            : dispo.heureDebut;
-
-          const finDispo = dispo.heureFin?.length === 8
-            ? dispo.heureFin.substring(0, 5)
-            : dispo.heureFin;
-
-          const debutRecherche = filtersParam.heureDebut;
-          const finRecherche = filtersParam.heureFin;
-
-          console.log(`⏰ Comparaison: ${debutRecherche}-${finRecherche} vs ${debutDispo}-${finDispo}`);
-
-          // Vérifier si le créneau recherché est COMPLÈTEMENT inclus dans la disponibilité
-          const debutRechercheMinutes = compareHeures(debutRecherche, "00:00");
-          const finRechercheMinutes = compareHeures(finRecherche, "00:00");
-          const debutDispoMinutes = compareHeures(debutDispo, "00:00");
-          const finDispoMinutes = compareHeures(finDispo, "00:00");
-
-          if (debutRechercheMinutes < debutDispoMinutes || finRechercheMinutes > finDispoMinutes) {
-            return false;
-          }
-        }
-
-        return true;
-      });
-
-      console.log("✅ Salles filtrées trouvées:", sallesFiltrees.length, sallesFiltrees);
-      setSalles(sallesFiltrees);
-    } catch (error) {
-      console.error("❌ Erreur récupération salles:", error);
-      showSnackbar(error.message, "error");
-      setSalles([]);
-    } finally {
-      setFiltersLoading(false);
-    }
-  };
-
-  // 🔹 Charger salles au démarrage avec les filtres par défaut
-  useEffect(() => {
-    const initialFilters = {
-      date: location.state?.date || defaultDate || new Date().toISOString().split('T')[0],
-      heureDebut: location.state?.heureDebut || defaultHeureDebut || "08:00",
-      heureFin: location.state?.heureFin || defaultHeureFin || "18:00"
-    };
-
-    setFilters(initialFilters);
-    fetchSallesDisponibles(initialFilters);
-  }, []);
 
   // 🆕 Auto-sélectionner la salle et l'étudiant si passés via le state
   useEffect(() => {
@@ -213,16 +136,6 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
           heureFin,
           etudiant: location.state.etudiantId || "223AMT4058" // 🆕 Pré-remplir avec l'ID étudiant
         }));
-
-        console.log("✅ Salle pré-sélectionnée:", {
-          salleId: location.state.salleId,
-          date: dateStr,
-          heureDebut,
-          heureFin,
-          etudiant: location.state.etudiantId || "223AMT4058"
-        });
-
-        // 🆕 activeStep est déjà à 1 par défaut, pas besoin de le changer
       }
     }
   }, [salles, location.state]);
@@ -231,12 +144,12 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
   useEffect(() => {
     const etudiantStatique = {
       etudiantId: "223AMT4058",
-      nom: "SAADAOUI",
-      prenom: "Mohamed",
-      email: "mohamed.saadaoui@esprit.tn",
-      phone: "+216 98 765 432",
-      classe: "4TWIN3",
-      specialite: "Genie Logiciel"
+      nom: "Ghodbane",
+      prenom: "Jawhar",
+      email: "jawhar.ghodbane@esprit.tn",
+      phone: "+216 25 555 555",
+      classe: "4ALINFO9",
+      specialite: "Informatique"
     };
 
     // Ajouter l'étudiant statique à la liste si ce n'est pas déjà fait
@@ -258,23 +171,22 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
     if (!form.date || !form.heureDebut || !form.heureFin) return;
 
     try {
-      // Note: Cette fonction dépend du backend - à adapter selon votre API
-      console.log("Chargement enseignants pour", form.date, form.heureDebut, form.heureFin);
-      setEmployes([]);
+      const listEnseignant = await soutenanceService.getAllEnseignants();
+      setEmployes(listEnseignant.data.data);
     } catch (error) {
       console.error("Erreur chargement enseignants:", error);
       showSnackbar("Erreur lors du chargement des enseignants", "error");
     }
   };
 
-  // 🔹 Charger enseignants quand la date ou les horaires changent
+  // Charger enseignants quand la date ou les horaires changent
   useEffect(() => {
     fetchEnseignants();
   }, [form.date, form.heureDebut, form.heureFin]);
 
 
 
-  // 🆕 Validation des horaires
+  // Validation des horaires
   const validateTimeSlot = () => {
     const errors = [];
 
@@ -291,7 +203,7 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
     return errors;
   };
 
-  // 🆕 CORRECTION : Toggle membre avec validation
+  // CORRECTION : Toggle membre avec validation
   const toggleMembre = (id) => {
     if (!id || id.trim() === "") {
       console.warn("⚠️ ID de membre invalide:", id);
@@ -307,64 +219,9 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
     });
   };
 
-  // 🔹 Récupérer automatiquement affectationStageId
-  const fetchAffectationStage = async (etudiantId) => {
-    try {
-      console.log(`🔍 Recherche affectation pour étudiant: ${etudiantId}`);
 
-      // NOTE: Ces appels sont pour les affectations de stage (domaine différent)
-      // À implémenter avec un service d'affectation si nécessaire
-      console.warn("⚠️ Récupération des affectations de stage non implémentée");
-      return null;
-    } catch (error) {
-      console.error("❌ Erreur récupération affectationStage :", error);
-      return null;
-    }
-  };
-
-  const selectEtudiant = async (etudiantId) => {
-    if (!etudiantId) {
-      showSnackbar("ID étudiant invalide", "error");
-      return;
-    }
-
-    console.log(`🎓 Sélection étudiant: ${etudiantId}`);
-
-    // 🆕 Afficher un indicateur de chargement
-    setLoading(true);
-
-    try {
-      const affectationId = await fetchAffectationStage(etudiantId);
-
-      console.log(`📋 Affectation ID récupéré: ${affectationId}`);
-
-      if (!affectationId) {
-        showSnackbar(
-          "⚠️ Aucune affectation de stage trouvée pour cet étudiant. La soutenance sera créée sans affectation.",
-          "warning"
-        );
-      }
-
-      setForm({
-        ...form,
-        etudiant: etudiantId,
-        affectationStageId: affectationId
-      });
-
-      setDialogEtudiantOpen(false);
-      setActiveStep(2);
-
-    } catch (error) {
-      console.error("❌ Erreur sélection étudiant:", error);
-      showSnackbar("Erreur lors de la sélection de l'étudiant", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 🆕 CORRECTION : Préparer le payload avec validation
   const preparePayload = () => {
-    // 🆕 VALIDER ET FILTRER LES IDs
+    // VALIDER ET FILTRER LES IDs
     const presidentIdValide = selectedPresident && selectedPresident.trim() !== ""
       ? selectedPresident
       : null;
@@ -376,16 +233,16 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
     return {
       salleId: form.salleId,
       etudiantId: form.etudiant,
-      affectationStageId: form.affectationStageId,
+      affectationStageId: 20861,
       date: form.date,
       heureDebut: form.heureDebut,
       heureFin: form.heureFin,
-      presidentId: presidentIdValide,
+      presidentId: "V-861-13",
       membresJuryIds: membresValides
     };
   };
 
-  // 🔹 Submit formulaire planification - VERSION CORRIGÉE
+  // Submit formulaire planification
   const handleSubmit = async () => {
     // Validation
     const errors = validateTimeSlot();
@@ -403,11 +260,8 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
     try {
       const payload = preparePayload();
 
-      console.log("📤 Payload envoyé:", payload); // Pour debug
-
-      // ⚠️ API de planification de soutenance - à implémenter dans le service
-      console.warn("⚠️ La planification de soutenance doit être implémentée dans soutenanceService");
-
+      const response = await soutenanceService.planifierSoutenance(payload);
+      console.log("✅ Réponse de la planification:", response.data);
       // Pour l'instant, afficher un message de succès simulé
       setForm(prev => ({ ...prev, soutenanceId: Math.random() }));
       showSnackbar("Soutenance créée avec succès !", "success");
@@ -418,11 +272,6 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
     } finally {
       setLoading(false);
     }
-  };
-
-  const openEtudiantDialog = () => {
-    setEtudiants([]); // TODO: Implémenter la recherche d'étudiants
-    setDialogEtudiantOpen(true);
   };
 
   const openJuryDialog = () => {
@@ -467,16 +316,6 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
     }
   };
 
-  // 🆕 Appliquer les filtres
-  const handleApplyFilters = () => {
-    fetchSallesDisponibles(filters);
-    setForm(prev => ({
-      ...prev,
-      date: filters.date,
-      heureDebut: filters.heureDebut,
-      heureFin: filters.heureFin
-    }));
-  };
 
   // 🆕 Réinitialiser la sélection du jury
   const handleJuryDialogClose = () => {
@@ -569,14 +408,7 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
                           ),
                         }}
                       />
-                      <Button
-                        variant="contained"
-                        onClick={openEtudiantDialog}
-                        startIcon={<PersonIcon />}
-                        sx={{ minWidth: 180 }}
-                      >
-                        Choisir Etudiant
-                      </Button>
+
                     </Box>
                   )}
 
@@ -861,15 +693,15 @@ const NouvelleReservation = ({ defaultDate, defaultHeureDebut, defaultHeureFin }
                   <em>Aucun président</em>
                 </MenuItem>
                 {employes.map((emp) => (
-                  <MenuItem key={emp.idEmploye} value={emp.idEmploye}>
+                  <MenuItem key={emp?.idEmploye} value={emp?.idEmploye}>
                     <Box display="flex" alignItems="center" gap={1}>
                       <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
-                        {emp.prenom?.[0]}{emp.nom?.[0]}
+                        {emp?.prenom?.[0]}{emp?.nom?.[0]}
                       </Avatar>
                       <Box>
                         <Typography variant="body1">{getNomComplet(emp)}</Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {emp.specialite || "Enseignant"}
+                          {emp?.specialite || "Enseignant"}
                         </Typography>
                       </Box>
                     </Box>
