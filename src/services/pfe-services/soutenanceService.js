@@ -6,7 +6,7 @@ const API_BASE = 'http://localhost:8222/api/soutenance'; // Vide pour utiliser l
 
 const soutenanceService = {
   // ==================== MÉTHODES SOUTENANCE ====================
-  
+
   // 1️⃣ Récupérer toutes les soutenances
   getAllSoutenances: () => axios.get(`${API_BASE}`),
 
@@ -27,12 +27,12 @@ const soutenanceService = {
 
   // 4️⃣ Méthode spécifique pour la planification
   getSallesDisponiblesPourCreneau: async (dateDebut, heureDebut, heureFin, cursusId) => {
-    try {      
+    try {
       const response = await axios.get(`${DISP_SALLE_BASE}/disponiblesByDate`, {
         params: { dateDebut, heureDebut, heureFin, cursusId },
         timeout: 10000
       });
-      
+
       return response.data;
     } catch (err) {
       console.error('❌ Erreur récupération salles créneau:', err);
@@ -56,7 +56,7 @@ const soutenanceService = {
     try {
       const token = sessionStorage.getItem('accessToken');
       console.log('🔑 Token:', token ? `✅ ${token.substring(0, 20)}...` : '❌ manquant');
-      
+
       const response = await axios.get(`${DISP_SALLE_BASE}/toutesDisponibilites`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -124,22 +124,12 @@ const soutenanceService = {
     }
   },
 
-  // 7.6️⃣ Changer le statut d'une salle
-  toggleSalleStatus: async (salleId) => {
-    try {
-      const response = await axios.put(`${SALLE_BASE}/statut/${salleId}`);
-      return response.data;
-    } catch (err) {
-      console.error('❌ Erreur changement statut salle:', err);
-      throw err;
-    }
-  },
 
   // ==================== MÉTHODES JURY ====================
 
   // 8️⃣ Récupérer tous les membres d'une soutenance (président + membres)
   getMembresBySoutenance: async (soutenanceId) => {
-    try {      
+    try {
       const response = await axios.get(`${API_BASE}/api/jury/${soutenanceId}/membres`, {
         headers: {
           'Cache-Control': 'no-cache',
@@ -149,8 +139,8 @@ const soutenanceService = {
           _t: new Date().getTime()
         }
       });
-    
-      
+
+
       // Debug détaillé
       if (response.data && Array.isArray(response.data)) {
         response.data.forEach((membre, index) => {
@@ -161,7 +151,7 @@ const soutenanceService = {
           });
         });
       }
-      
+
       return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       console.error('❌ Erreur récupération membres jury:', error);
@@ -177,12 +167,12 @@ const soutenanceService = {
   // 1️⃣1️⃣ Ajouter des membres à une soutenance
   ajouterMembres: async (soutenanceId, employeIds, role = 'MEMBRE') => {
     try {
-      
+
       const response = await axios.post(
-        `${API_BASE}/api/jury/${soutenanceId}/membres?role=${role}`, 
+        `${API_BASE}/api/jury/${soutenanceId}/membres?role=${role}`,
         employeIds
       );
-      
+
       return response.data;
     } catch (error) {
       console.error('❌ Erreur ajout membres:', error);
@@ -195,11 +185,11 @@ const soutenanceService = {
   affecterPresident: async (soutenanceId, employeId) => {
     try {
       console.log(`👑 Affectation président: soutenance=${soutenanceId}, employe=${employeId}`);
-      
+
       const response = await axios.post(
         `${API_BASE}/api/jury/${soutenanceId}/president/${employeId}`
       );
-      
+
       return response.data;
     } catch (error) {
       console.error('❌ Erreur affectation président:', error);
@@ -211,11 +201,11 @@ const soutenanceService = {
   // 1️⃣3️⃣ Supprimer un membre du jury
   supprimerMembre: async (soutenanceId, employeId) => {
     try {
-      
+
       const response = await axios.delete(
         `${API_BASE}/api/jury/${soutenanceId}/membres/${employeId}`
       );
-      
+
       return response.data;
     } catch (error) {
       console.error('❌ Erreur suppression membre:', error);

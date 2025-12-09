@@ -7,11 +7,10 @@ import { LoadingScreen } from 'src/components/loading-screen';
 import SoutenanceView from 'src/sections/pfe/soutenance/view';
 import PlanificationSoutenances from 'src/sections/pfe/Soutenance/PlanificationSoutenances';
 import NouvelleReservation from 'src/sections/pfe/Soutenance/NouvelleReservation';
-import SalleDetails from 'src/sections/pfe/Soutenance/SalleDetails';
 import Reservationsallesoutenance from 'src/sections/pfe/Soutenance/reservationsallesoutenance';
 import GrilleAcademique from 'src/sections/pfe/grille/GrilleAcademique';
 // ----------------------------------------------------------------------
- 
+
 const ProfilePage = lazy(() => import('src/pages/online/profile'));
 
 const EncadrementExpertiseMainPage = lazy(() => import('src/pages/pfe/encadrementExpertiseMainPage'));
@@ -30,49 +29,48 @@ const GrilleEntreprise = lazy(() => import('src/sections/pfe/grille/GrilleEntrep
 const GrilleSoutenance = lazy(() => import('src/sections/pfe/grille/GrilleSoutenance'));
 const EvaluationWorkflow = lazy(() => import('src/sections/pfe/grille/EvaluationWorkflow'));
 // ----------------------------------------------------------------------
-  
+
 export const pfeRoutes = [
   {
     path: 'pfe',
     element: (
-    //  <AuthGuard>
-        <DashboardLayout>
-          <Suspense fallback={<LoadingScreen />}>
-            <Outlet />
-          </Suspense>
-        </DashboardLayout>
-     //</AuthGuard>
+      //  <AuthGuard>
+      <DashboardLayout>
+        <Suspense fallback={<LoadingScreen />}>
+          <Outlet />
+        </Suspense>
+      </DashboardLayout>
+      //</AuthGuard>
     ),
     children: [
       { element: <ProfilePage />, index: true },
-      { path:'profile',element: <ProfilePage /> },
-      { path:'encadrement-expertise',element: <EncadrementExpertiseMainPage /> },
-      { path:'soutenance',element: <SoutenanceView /> },
-      { path:'demande-changement',element: <ReclamationEncadrantOuExpertFormPage /> },
-      { path:'liste-demandes-changement',element: <ReclamationEncadrantOuExpertListPage /> },
-      { path: 'soutenance/planification', element: ( <PlanificationSoutenances />   ) },      
+      { path: 'profile', element: <ProfilePage /> },
+      { path: 'encadrement-expertise', element: <EncadrementExpertiseMainPage /> },
+      { path: 'soutenance', element: <SoutenanceView /> },
+      { path: 'demande-changement', element: <ReclamationEncadrantOuExpertFormPage /> },
+      { path: 'liste-demandes-changement', element: <ReclamationEncadrantOuExpertListPage /> },
+      { path: 'soutenance/planification', element: (<PlanificationSoutenances />) },
       { path: 'soutenance/planification/sallesdisp', element: <Reservationsallesoutenance /> },
-      
+
       // NouvelleReservation - Only for admin role
-      { 
-        path: 'soutenance/planification/nouvelle', 
+      {
+        path: 'soutenance/planification/nouvelle',
         element: (
-            <NouvelleReservation />
-        ) 
+          <NouvelleReservation />
+        )
       },
-      
-      { path: 'soutenance/planification/:id', element: <SalleDetails /> },
-      {path: 'grille/GrilleAcademique', element: <GrilleAcademique /> },
+
+      { path: 'grille/GrilleAcademique', element: <GrilleAcademique /> },
       { path: 'demandeConvention', element: <DemandeConvention /> },
       { path: 'traiterConvention', element: <TraiterConvention /> },
       { path: 'planTravail', element: <PlanTravail /> },
       { path: 'traiterPlanTravail', element: <TraiterPlanTravail /> },
       { path: 'progression', element: <Progression /> },
-      { path:'grille/GrilleMiParcours',element: <GrilleMiParcours /> },
-      { path:'grille/GrilleExpert',element: <GrilleExpert /> },
-      { path:'grille/GrilleEntreprise',element: <GrilleEntreprise /> },
-      { path:'grille/GrilleSoutenance',element: <GrilleSoutenance /> },
-      { path:'grille/EvaluationWorkflow',element: <EvaluationWorkflow /> },
+      { path: 'grille/GrilleMiParcours', element: <GrilleMiParcours /> },
+      { path: 'grille/GrilleExpert', element: <GrilleExpert /> },
+      { path: 'grille/GrilleEntreprise', element: <GrilleEntreprise /> },
+      { path: 'grille/GrilleSoutenance', element: <GrilleSoutenance /> },
+      { path: 'grille/EvaluationWorkflow', element: <EvaluationWorkflow /> },
     ],
   },
 ];

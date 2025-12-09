@@ -796,14 +796,6 @@ const PlanificationSoutenances = () => {
                           >
                             {salle.statut === "Disponible" ? "Planifier Soutenance" : "Indisponible"}
                           </Button>
-
-                          <Button
-                            variant="outlined"
-                            onClick={() => navigate(`${salle.id}`)}
-                            sx={{ borderRadius: 3 }}
-                          >
-                            Détails
-                          </Button>
                         </Box>
                       </CardContent>
                     </Card>
