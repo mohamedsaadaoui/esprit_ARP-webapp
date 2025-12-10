@@ -5,7 +5,6 @@ import { RoleBasedGuard } from 'src/auth/guard';
 import DashboardLayout from 'src/layouts/dashboard';
 import { LoadingScreen } from 'src/components/loading-screen';
 import SoutenanceView from 'src/sections/pfe/soutenance/view';
-import PlanificationSoutenances from 'src/sections/pfe/Soutenance/PlanificationSoutenances';
 import NouvelleReservation from 'src/sections/pfe/Soutenance/NouvelleReservation';
 import Reservationsallesoutenance from 'src/sections/pfe/Soutenance/reservationsallesoutenance';
 import GrilleAcademique from 'src/sections/pfe/grille/GrilleAcademique';
@@ -49,7 +48,7 @@ export const pfeRoutes = [
       { path: 'soutenance', element: <SoutenanceView /> },
       { path: 'demande-changement', element: <ReclamationEncadrantOuExpertFormPage /> },
       { path: 'liste-demandes-changement', element: <ReclamationEncadrantOuExpertListPage /> },
-      { path: 'soutenance/planification', element: (<PlanificationSoutenances />) },
+      { path: 'soutenance/planification', element: <NouvelleReservation /> },
       { path: 'soutenance/planification/sallesdisp', element: <Reservationsallesoutenance /> },
 
       // NouvelleReservation - Only for admin role
