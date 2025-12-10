@@ -6,7 +6,6 @@ import DashboardLayout from 'src/layouts/dashboard';
 import { LoadingScreen } from 'src/components/loading-screen';
 import SoutenanceView from 'src/sections/pfe/soutenance/view';
 import NouvelleReservation from 'src/sections/pfe/Soutenance/NouvelleReservation';
-import Reservationsallesoutenance from 'src/sections/pfe/Soutenance/reservationsallesoutenance';
 import GrilleAcademique from 'src/sections/pfe/grille/GrilleAcademique';
 // ----------------------------------------------------------------------
 
@@ -39,7 +38,7 @@ export const pfeRoutes = [
           <Outlet />
         </Suspense>
       </DashboardLayout>
-      //</AuthGuard>
+      // </AuthGuard>
     ),
     children: [
       { element: <ProfilePage />, index: true },
@@ -49,7 +48,6 @@ export const pfeRoutes = [
       { path: 'demande-changement', element: <ReclamationEncadrantOuExpertFormPage /> },
       { path: 'liste-demandes-changement', element: <ReclamationEncadrantOuExpertListPage /> },
       { path: 'soutenance/planification', element: <NouvelleReservation /> },
-      { path: 'soutenance/planification/sallesdisp', element: <Reservationsallesoutenance /> },
 
       // NouvelleReservation - Only for admin role
       {
