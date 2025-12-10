@@ -256,7 +256,7 @@ const NouvelleReservation = () => {
   };
 
   return (
-    <Box sx={{ p: 3, maxWidth: 1400, margin: '0 auto' }}>
+    <Box sx={{ px: 4, py: 3 }}>
       {/* Header */}
       <Card sx={{ mb: 4, background: 'linear-gradient(135deg, #b53f3f 0%, #d41010 100%)' }}>
         <CardContent sx={{ color: 'white', textAlign: 'center', py: 4 }}>
@@ -596,46 +596,173 @@ const NouvelleReservation = () => {
           </Card>
         </Grid>
 
-        {/* Summary Panel */}
+        {/* Summary Panel - Sophisticated Design */}
         <Grid item xs={12} md={4}>
-          <Card sx={{ position: 'sticky', top: 100 }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                Récapitulatif
-              </Typography>
-              <Divider sx={{ my: 2 }} />
+          <Card
+            sx={{
+              position: 'sticky',
+              top: 100,
+              background: `linear-gradient(145deg, ${alpha(theme.palette.primary.main, 0.02)}, ${alpha(theme.palette.background.paper, 1)})`,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+              borderRadius: 3,
+              boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, 0.08)}`
+            }}
+          >
+            <CardContent sx={{ p: 3 }}>
+              <Box display="flex" alignItems="center" gap={1} mb={2}>
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 2,
+                    background: 'linear-gradient(135deg, #b53f3f 0%, #d41010 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <CheckCircleIcon sx={{ color: 'white', fontSize: 24 }} />
+                </Box>
+                <Typography variant="h6" fontWeight="bold">
+                  Récapitulatif
+                </Typography>
+              </Box>
 
-              {form.date && (
-                <DetailItem
-                  icon={<ScheduleIcon />}
-                  label="Date et heure"
-                  value={`${form.date} • ${form.heureDebut} - ${form.heureFin}`}
-                />
-              )}
+              <Divider sx={{ mb: 3 }} />
 
-              {getSelectedSalle() && (
-                <DetailItem
-                  icon={<RoomIcon />}
-                  label="Salle"
-                  value={(getSelectedSalle().salle || getSelectedSalle()).nom}
-                />
-              )}
+              {/* Progress Indicator */}
+              <Box sx={{ mb: 3 }}>
+                <Box display="flex" justifyContent="space-between" mb={1}>
+                  <Typography variant="caption" color="text.secondary">
+                    Progression
+                  </Typography>
+                  <Typography variant="caption" fontWeight="bold" sx={{ color: '#d41010' }}>
+                    {Math.round(((activeStep + 1) / 4) * 100)}%
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    height: 6,
+                    borderRadius: 3,
+                    bgcolor: 'rgba(180, 63, 63, 0.15)',
+                    overflow: 'hidden'
+                  }}
+                >
+                  <Box
+                    sx={{
+                      height: '100%',
+                      width: `${((activeStep + 1) / 4) * 100}%`,
+                      background: 'linear-gradient(90deg, #b53f3f 0%, #d41010 100%)',
+                      borderRadius: 3,
+                      transition: 'width 0.3s ease'
+                    }}
+                  />
+                </Box>
+              </Box>
 
-              {getSelectedEtudiant() && (
-                <DetailItem
-                  icon={<SchoolIcon />}
-                  label="Étudiant"
-                  value={`${getSelectedEtudiant().prenom} ${getSelectedEtudiant().nom}`}
-                />
-              )}
+              {/* Summary Items */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {form.date && (
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: alpha(theme.palette.info.main, 0.08),
+                      border: `1px solid ${alpha(theme.palette.info.main, 0.2)}`
+                    }}
+                  >
+                    <Box display="flex" alignItems="center" gap={1} mb={0.5}>
+                      <ScheduleIcon sx={{ fontSize: 18, color: 'info.main' }} />
+                      <Typography variant="caption" color="text.secondary" fontWeight="medium">
+                        Date et heure
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" fontWeight="bold">
+                      {form.date} • {form.heureDebut} - {form.heureFin}
+                    </Typography>
+                  </Box>
+                )}
 
-              {selectedPresident && (
-                <DetailItem
-                  icon={<GroupsIcon />}
-                  label="Président"
-                  value={getNomComplet(employes.find(e => e.idEmploye === selectedPresident))}
-                />
-              )}
+                {getSelectedSalle() && (
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: alpha(theme.palette.success.main, 0.08),
+                      border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`
+                    }}
+                  >
+                    <Box display="flex" alignItems="center" gap={1} mb={0.5}>
+                      <RoomIcon sx={{ fontSize: 18, color: 'success.main' }} />
+                      <Typography variant="caption" color="text.secondary" fontWeight="medium">
+                        Salle
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" fontWeight="bold">
+                      {(getSelectedSalle().salle || getSelectedSalle()).nom}
+                    </Typography>
+                  </Box>
+                )}
+
+                {getSelectedEtudiant() && (
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: alpha(theme.palette.warning.main, 0.08),
+                      border: `1px solid ${alpha(theme.palette.warning.main, 0.2)}`
+                    }}
+                  >
+                    <Box display="flex" alignItems="center" gap={1} mb={0.5}>
+                      <SchoolIcon sx={{ fontSize: 18, color: 'warning.main' }} />
+                      <Typography variant="caption" color="text.secondary" fontWeight="medium">
+                        Étudiant
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" fontWeight="bold">
+                      {getSelectedEtudiant().prenom} {getSelectedEtudiant().nom}
+                    </Typography>
+                  </Box>
+                )}
+
+                {selectedPresident && (
+                  <Box
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: alpha(theme.palette.secondary.main, 0.08),
+                      border: `1px solid ${alpha(theme.palette.secondary.main, 0.2)}`
+                    }}
+                  >
+                    <Box display="flex" alignItems="center" gap={1} mb={0.5}>
+                      <GroupsIcon sx={{ fontSize: 18, color: 'secondary.main' }} />
+                      <Typography variant="caption" color="text.secondary" fontWeight="medium">
+                        Président du Jury
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" fontWeight="bold">
+                      {getNomComplet(employes.find(e => e.idEmploye === selectedPresident))}
+                    </Typography>
+                  </Box>
+                )}
+
+                {/* Empty state */}
+                {!form.salleId && !getSelectedEtudiant() && !selectedPresident && (
+                  <Box
+                    sx={{
+                      p: 3,
+                      borderRadius: 2,
+                      bgcolor: alpha(theme.palette.grey[500], 0.05),
+                      border: `1px dashed ${alpha(theme.palette.grey[500], 0.3)}`,
+                      textAlign: 'center'
+                    }}
+                  >
+                    <Typography variant="body2" color="text.secondary">
+                      Complétez les étapes pour voir le récapitulatif
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
             </CardContent>
           </Card>
         </Grid>
@@ -695,10 +822,10 @@ const NouvelleReservation = () => {
             Valider
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog >
 
       {/* Snackbar */}
-      <Snackbar
+      < Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
@@ -710,8 +837,8 @@ const NouvelleReservation = () => {
         >
           {snackbar.message}
         </Alert>
-      </Snackbar>
-    </Box>
+      </Snackbar >
+    </Box >
   );
 };
 
