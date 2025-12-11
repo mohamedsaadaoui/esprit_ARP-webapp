@@ -49,14 +49,6 @@ export const pfeRoutes = [
       { path: 'liste-demandes-changement', element: <ReclamationEncadrantOuExpertListPage /> },
       { path: 'soutenance/planification', element: <NouvelleReservation /> },
 
-      // NouvelleReservation - Only for admin role
-      {
-        path: 'soutenance/planification/nouvelle',
-        element: (
-          <NouvelleReservation />
-        )
-      },
-
       { path: 'grille/GrilleAcademique', element: <GrilleAcademique /> },
       { path: 'demandeConvention', element: <DemandeConvention /> },
       { path: 'traiterConvention', element: <TraiterConvention /> },

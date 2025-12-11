@@ -3,16 +3,17 @@
 
 
 
- 
-export const ROOTS = {  AUTH: '/auth',
+
+export const ROOTS = {
+  AUTH: '/auth',
   DASHBOARD: '/dashboard',
   ONLINE: '/online',
   PFE: '/pfe',
-  HOME:'/home'
+  HOME: '/home'
 };
- 
+
 // ----------------------------------------------------------------------
- 
+
 export const paths = {
   // AUTH
   auth: {
@@ -23,7 +24,7 @@ export const paths = {
   },
   // DASHBOARD
   dashboard: {
-      root: `${ROOTS.DASHBOARD}`,
+    root: `${ROOTS.DASHBOARD}`,
     one: `${ROOTS.DASHBOARD}/one`,
     two: `${ROOTS.DASHBOARD}/emploi`,
     three: `${ROOTS.DASHBOARD}/three`,
@@ -42,26 +43,26 @@ export const paths = {
     listEnsByCours: `${ROOTS.DASHBOARD}/listEnsByCours`,
 
 
-   // disp: `${ROOTS.DASHBOARD}/disp`,
+    // disp: `${ROOTS.DASHBOARD}/disp`,
     disp: (idEmp) => `${ROOTS.DASHBOARD}/disp/${idEmp}`,
 
     group: {
       root: `${ROOTS.DASHBOARD}/group`,
-     
+
       six: `${ROOTS.DASHBOARD}/group/six`,
     },
   },
 
-    online: {
+  online: {
     profile: ROOTS.ONLINE,
     absence: `${ROOTS.ONLINE}/absence`,
     resultat: `${ROOTS.ONLINE}/resultat`,
     evaluation: `${ROOTS.ONLINE}/evaluation`,
     edt: `${ROOTS.ONLINE}/edt`,
-    reclamation:`${ROOTS.ONLINE}/reclamation`,
-   
+    reclamation: `${ROOTS.ONLINE}/reclamation`,
+
   },
-    PFE: {
+  PFE: {
     profile: ROOTS.PFE,
 
     encadrementExpertise: `${ROOTS.PFE}/encadrement-expertise`,
@@ -72,22 +73,21 @@ export const paths = {
     planTravail: `${ROOTS.PFE}/planTravail`,
     traiterPlanTravail: `${ROOTS.PFE}/traiterPlanTravail`,
     progression: `${ROOTS.PFE}/progression`,
+
     soutenance: `${ROOTS.PFE}/soutenance`,
     planificationSoutenances: `${ROOTS.PFE}/soutenance/planification`,
-    Reservationsallesoutenance: `${ROOTS.PFE}/soutenance/planification/sallesdisp`,
+
     GrilleAcademique: `${ROOTS.PFE}/grille/GrilleAcademique`,
     evalualtion: `${ROOTS.PFE}/grille/EvaluationWorkflow`,
     GrilleExpert: `${ROOTS.PFE}/grille/GrilleExpert`,
     GrilleEntreprise: `${ROOTS.PFE}/grille/GrilleEntreprise`,
     GrilleSoutenance: `${ROOTS.PFE}/grille/GrilleSoutenance`,
-    NouvelleReservation: `${ROOTS.PFE}/soutenance/planification/nouvelle`,
-    SalleDetails: (id) => `${ROOTS.PFE}/soutenance/planification/${id}`,
 
-    },
-    home: {
-    home: `${ROOTS.ONLINE}`, 
-      }
-   
+  },
+  home: {
+    home: `${ROOTS.ONLINE}`,
+  }
+
 
 
 };
