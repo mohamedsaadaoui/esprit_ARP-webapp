@@ -14,4 +14,4 @@ Frontend of the ESPRIT ERP system developed with **React.js (Vite)** and **Mater
 
 ![Login Page - ESPRIT ERP](public/assets/background/soutnenace.jpeg)
 
-![Login Page - ESPRIT ERP](public/assets/background/Captured'écran2026-03-23134058.png)
+![Login Page - ESPRIT ERP](public/assets/background/134058.png)
